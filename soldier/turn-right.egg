@@ -1,0 +1,664 @@
+<CoordinateSystem> { Y-Up }
+
+<Comment> {
+  "dae2egg idle.dae idle.egg"
+}
+<Group> RootNode {
+  <Dart> { 1 }
+  <Group> Hips {
+    <Transform> {
+      <Matrix4> {
+        1 0 0 0
+        0 1 0 0
+        0 0 1 0
+        0 109.535 0 1
+      }
+    }
+    <Group> Spine {
+      <Transform> {
+        <Matrix4> {
+          1 0 0 0
+          0 1 0 0
+          0 0 1 0
+          0 9.6236 0.3829 1
+        }
+      }
+      <Group> Spine1 {
+        <Transform> {
+          <Matrix4> {
+            1 0 0 0
+            0 1 0 0
+            0 0 1 0
+            0 6.0501 0.2796 1
+          }
+        }
+        <Group> Spine2 {
+          <Transform> {
+            <Matrix4> {
+              1 0 0 0
+              0 1 0 0
+              0 0 1 0
+              0 7.2227 0.0547 1
+            }
+          }
+          <Group> Neck {
+            <Transform> {
+              <Matrix4> {
+                1 0 0 0
+                0 1 0 0
+                0 0 1 0
+                0 38.9726 -1.4867 1
+              }
+            }
+            <Group> Head {
+              <Transform> {
+                <Matrix4> {
+                  1 0 0 0
+                  0 1 0 0
+                  0 0 1 0
+                  0 14.9272 1.0963 1
+                }
+              }
+              <Group> HeadTop_End {
+                <Transform> {
+                  <Matrix4> {
+                    1 0 0 0
+                    0 1 0 0
+                    0 0 1 0
+                    0 16.4275 1.0531 1
+                  }
+                }
+              }
+            }
+          }
+          <Group> LeftShoulder {
+            <Transform> {
+              <Matrix4> {
+                1 0 0 0
+                0 1 0 0
+                0 0 1 0
+                9.2955 32.8604 -0.1837 1
+              }
+            }
+            <Group> LeftArm {
+              <Transform> {
+                <Matrix4> {
+                  1 0 0 0
+                  0 1 0 0
+                  0 0 1 0
+                  19.2065 -2.8126 -3.5916 1
+                }
+              }
+              <Group> LeftForeArm {
+                <Transform> {
+                  <Matrix4> {
+                    1 0 0 0
+                    0 1 0 0
+                    0 0 1 0
+                    35.2849 0 0 1
+                  }
+                }
+                <Group> LeftHand {
+                  <Transform> {
+                    <Matrix4> {
+                      1 0 0 0
+                      0 1 -0.000472206 0
+                      0 0.000472206 1 0
+                      29.492 0 0 1
+                    }
+                  }
+                  <Group> LeftHandThumb1 {
+                    <Transform> {
+                      <Matrix4> {
+                        0.998687 0.0477092 -0.0186548 0
+                        -0.0480212 0.998708 -0.0166458 0
+                        0.0178365 0.0175198 0.999687 0
+                        8.1721 -5.122 5.3168 1
+                      }
+                    }
+                    <Group> LeftHandThumb2 {
+                      <Transform> {
+                        <Matrix4> {
+                          0.998682 -0.0481769 0.0176716 0
+                          0.0478641 0.998697 0.0177169 0
+                          -0.0185021 -0.0168477 0.999687 0
+                          2.3427 -1.5478 1.4261 1
+                        }
+                      }
+                      <Group> LeftHandThumb3 {
+                        <Transform> {
+                          <Matrix4> {
+                            0.999928 0.0037123 0.0114305 0
+                            -0.00361245 0.999955 -0.00874409 0
+                            -0.0114624 0.00870216 0.999896 0
+                            3.1925 -1.8432 1.8432 1
+                          }
+                        }
+                        <Group> LeftHandThumb4 {
+                          <Transform> {
+                            <Matrix4> {
+                              1 0 0 0
+                              0 1 0 0
+                              0 0 1 0
+                              3.7732 -2.2014 2.1068 1
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                  <Group> LeftHandIndex1 {
+                    <Transform> {
+                      <Matrix4> {
+                        1 0 0 0
+                        0 1 0 0
+                        0 0 1 0
+                        17.8847 -1.0633 3.0467 1
+                      }
+                    }
+                    <Group> LeftHandIndex2 {
+                      <Transform> {
+                        <Matrix4> {
+                          1 0 0 0
+                          0 1 0 0
+                          0 0 1 0
+                          4.3484 0 0 1
+                        }
+                      }
+                      <Group> LeftHandIndex3 {
+                        <Transform> {
+                          <Matrix4> {
+                            1 0 0 0
+                            0 1 0 0
+                            0 0 1 0
+                            4.028 0 0 1
+                          }
+                        }
+                        <Group> LeftHandIndex4 {
+                          <Transform> {
+                            <Matrix4> {
+                              1 0 0 0
+                              0 1 0 0
+                              0 0 1 0
+                              2.7517 0 0 1
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                  <Group> LeftHandMiddle1 {
+                    <Transform> {
+                      <Matrix4> {
+                        1 0 0 0
+                        0 1 0 0
+                        0 0 1 0
+                        18.6466 0 0 1
+                      }
+                    }
+                    <Group> LeftHandMiddle2 {
+                      <Transform> {
+                        <Matrix4> {
+                          1 2.62055e-05 0 0
+                          -2.62055e-05 1 0 0
+                          0 0 1 0
+                          3.9263 0 0 1
+                        }
+                      }
+                      <Group> LeftHandMiddle3 {
+                        <Transform> {
+                          <Matrix4> {
+                            1 -2.62055e-05 0 0
+                            2.62055e-05 1 0 0
+                            0 0 1 0
+                            3.816 -0.0001 0 1
+                          }
+                        }
+                        <Group> LeftHandMiddle4 {
+                          <Transform> {
+                            <Matrix4> {
+                              1 0 0 0
+                              0 1 0 0
+                              0 0 1 0
+                              3.0471 0 0 1
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                  <Group> LeftHandRing1 {
+                    <Transform> {
+                      <Matrix4> {
+                        1 0 0 0
+                        0 1 0 0
+                        0 0 1 0
+                        17.4109 -0.1672 -3.7291 1
+                      }
+                    }
+                    <Group> LeftHandRing2 {
+                      <Transform> {
+                        <Matrix4> {
+                          1 0 0 0
+                          0 1 0 0
+                          0 0 1 0
+                          3.7081 0 0 1
+                        }
+                      }
+                      <Group> LeftHandRing3 {
+                        <Transform> {
+                          <Matrix4> {
+                            1 0 0 0
+                            0 1 0 0
+                            0 0 1 0
+                            3.438 0 0 1
+                          }
+                        }
+                        <Group> LeftHandRing4 {
+                          <Transform> {
+                            <Matrix4> {
+                              1 0 0 0
+                              0 1 0 0
+                              0 0 1 0
+                              2.8566 0 0 1
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                  <Group> LeftHandPinky1 {
+                    <Transform> {
+                      <Matrix4> {
+                        1 0 0 0
+                        0 1 0 0
+                        0 0 1 0
+                        16.1425 -0.8844 -7.0711 1
+                      }
+                    }
+                    <Group> LeftHandPinky2 {
+                      <Transform> {
+                        <Matrix4> {
+                          1 0 0 0
+                          0 1 0 0
+                          0 0 1 0
+                          2.5036 0 0 1
+                        }
+                      }
+                      <Group> LeftHandPinky3 {
+                        <Transform> {
+                          <Matrix4> {
+                            1 0 0 0
+                            0 1 0 0
+                            0 0 1 0
+                            2.3486 0 0 1
+                          }
+                        }
+                        <Group> LeftHandPinky4 {
+                          <Transform> {
+                            <Matrix4> {
+                              1 0 0 0
+                              0 1 0 0
+                              0 0 1 0
+                              2.2694 0 0 1
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+          <Group> RightShoulder {
+            <Transform> {
+              <Matrix4> {
+                1 0 0 0
+                0 1 0 0
+                0 0 1 0
+                -9.2955 32.8604 -0.1837 1
+              }
+            }
+            <Group> RightArm {
+              <Transform> {
+                <Matrix4> {
+                  1 0 0 0
+                  0 1 0 0
+                  0 0 1 0
+                  -19.2065 -2.8126 -3.5916 1
+                }
+              }
+              <Group> RightForeArm {
+                <Transform> {
+                  <Matrix4> {
+                    1 0 0 0
+                    0 1 0 0
+                    0 0 1 0
+                    -35.2849 0 0 1
+                  }
+                }
+                <Group> RightHand {
+                  <Transform> {
+                    <Matrix4> {
+                      1 0 0 0
+                      0 1 -0.000472206 0
+                      0 0.000472206 1 0
+                      -29.492 0 0 1
+                    }
+                  }
+                  <Group> RightHandThumb1 {
+                    <Transform> {
+                      <Matrix4> {
+                        0.998687 -0.0477092 0.0186548 0
+                        0.0480212 0.998708 -0.0166458 0
+                        -0.0178365 0.0175198 0.999687 0
+                        -8.1721 -5.122 5.3168 1
+                      }
+                    }
+                    <Group> RightHandThumb2 {
+                      <Transform> {
+                        <Matrix4> {
+                          0.998682 0.0481769 -0.0176716 0
+                          -0.0478641 0.998697 0.0177169 0
+                          0.0185021 -0.0168477 0.999687 0
+                          -2.3427 -1.5478 1.4261 1
+                        }
+                      }
+                      <Group> RightHandThumb3 {
+                        <Transform> {
+                          <Matrix4> {
+                            0.999928 -0.0037123 -0.0114305 0
+                            0.00361245 0.999955 -0.00874409 0
+                            0.0114624 0.00870216 0.999896 0
+                            -3.1925 -1.8432 1.8432 1
+                          }
+                        }
+                        <Group> RightHandThumb4 {
+                          <Transform> {
+                            <Matrix4> {
+                              1 0 0 0
+                              0 1 0 0
+                              0 0 1 0
+                              -3.7732 -2.2014 2.1068 1
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                  <Group> RightHandIndex1 {
+                    <Transform> {
+                      <Matrix4> {
+                        1 0 0 0
+                        0 1 0 0
+                        0 0 1 0
+                        -17.8847 -1.0633 3.0467 1
+                      }
+                    }
+                    <Group> RightHandIndex2 {
+                      <Transform> {
+                        <Matrix4> {
+                          1 0 0 0
+                          0 1 0 0
+                          0 0 1 0
+                          -4.2079 0 0 1
+                        }
+                      }
+                      <Group> RightHandIndex3 {
+                        <Transform> {
+                          <Matrix4> {
+                            1 0 0 0
+                            0 1 0 0
+                            0 0 1 0
+                            -4.0382 0 0 1
+                          }
+                        }
+                        <Group> RightHandIndex4 {
+                          <Transform> {
+                            <Matrix4> {
+                              1 0 0 0
+                              0 1 0 0
+                              0 0 1 0
+                              -3.1502 0 0 1
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                  <Group> RightHandMiddle1 {
+                    <Transform> {
+                      <Matrix4> {
+                        1 0 0 0
+                        0 1 0 0
+                        0 0 1 0
+                        -18.6466 0 0 1
+                      }
+                    }
+                    <Group> RightHandMiddle2 {
+                      <Transform> {
+                        <Matrix4> {
+                          1 0 0 0
+                          0 1 0 0
+                          0 0 1 0
+                          -3.7151 0 0 1
+                        }
+                      }
+                      <Group> RightHandMiddle3 {
+                        <Transform> {
+                          <Matrix4> {
+                            1 0 0 0
+                            0 1 0 0
+                            0 0 1 0
+                            -4.1566 0 0 1
+                          }
+                        }
+                        <Group> RightHandMiddle4 {
+                          <Transform> {
+                            <Matrix4> {
+                              1 0 0 0
+                              0 1 0 0
+                              0 0 1 0
+                              -3.4232 0 0 1
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                  <Group> RightHandRing1 {
+                    <Transform> {
+                      <Matrix4> {
+                        1 0 0 0
+                        0 1 0 0
+                        0 0 1 0
+                        -17.4109 -0.1672 -3.7291 1
+                      }
+                    }
+                    <Group> RightHandRing2 {
+                      <Transform> {
+                        <Matrix4> {
+                          1 0 0 0
+                          0 1 0 0
+                          0 0 1 0
+                          -3.7081 0 0 1
+                        }
+                      }
+                      <Group> RightHandRing3 {
+                        <Transform> {
+                          <Matrix4> {
+                            1 0 0 0
+                            0 1 0 0
+                            0 0 1 0
+                            -3.438 0 0 1
+                          }
+                        }
+                        <Group> RightHandRing4 {
+                          <Transform> {
+                            <Matrix4> {
+                              1 0 0 0
+                              0 1 0 0
+                              0 0 1 0
+                              -2.8566 0 0 1
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                  <Group> RightHandPinky1 {
+                    <Transform> {
+                      <Matrix4> {
+                        1 0 0 0
+                        0 1 0 0
+                        0 0 1 0
+                        -16.1425 -0.8844 -7.0711 1
+                      }
+                    }
+                    <Group> RightHandPinky2 {
+                      <Transform> {
+                        <Matrix4> {
+                          1 0 0 0
+                          0 1 0 0
+                          0 0 1 0
+                          -2.5036 0 0 1
+                        }
+                      }
+                      <Group> RightHandPinky3 {
+                        <Transform> {
+                          <Matrix4> {
+                            1 0 0 0
+                            0 1 0 0
+                            0 0 1 0
+                            -2.3486 0 0 1
+                          }
+                        }
+                        <Group> RightHandPinky4 {
+                          <Transform> {
+                            <Matrix4> {
+                              1 0 0 0
+                              0 1 0 0
+                              0 0 1 0
+                              -2.2694 0 0 1
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    <Group> LeftUpLeg {
+      <Transform> {
+        <Matrix4> {
+          1 -0.000154455 0 0
+          0.000154455 1 0 0
+          0 0 1 0
+          10.6446 -6.3625 -0.1891 1
+        }
+      }
+      <Group> LeftLeg {
+        <Transform> {
+          <Matrix4> {
+            1 0 0 0
+            0 1 0 0
+            0 0 1 0
+            0.3722 -44.2762 1.6939 1
+          }
+        }
+        <Group> LeftFoot {
+          <Transform> {
+            <Matrix4> {
+              1 0.000154455 0 0
+              -0.000154455 1 0 0
+              0 0 1 0
+              -0.358 -47.6598 -4.5619 1
+            }
+          }
+          <Group> LeftToeBase {
+            <Transform> {
+              <Matrix4> {
+                1 0 0 0
+                0 1 0 0
+                0 0 1 0
+                6.018 -9.8223 17.1788 1
+              }
+            }
+            <Group> LeftToe_End {
+              <Transform> {
+                <Matrix4> {
+                  1 0 0 0
+                  0 1 0 0
+                  0 0 1 0
+                  3.1874 0.1171 11.234 1
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    <Group> RightUpLeg {
+      <Transform> {
+        <Matrix4> {
+          1 -0.000151192 0 0
+          0.000151192 1 0 0
+          0 0 1 0
+          -10.6446 -6.3625 -0.1891 1
+        }
+      }
+      <Group> RightLeg {
+        <Transform> {
+          <Matrix4> {
+            1 0 0 0
+            0 1 0 0
+            0 0 1 0
+            -0.3587 -44.2763 1.6937 1
+          }
+        }
+        <Group> RightFoot {
+          <Transform> {
+            <Matrix4> {
+              1 0.000151192 0 0
+              -0.000151192 1 0 0
+              0 0 1 0
+              0.3726 -47.6597 -4.5617 1
+            }
+          }
+          <Group> RightToeBase {
+            <Transform> {
+              <Matrix4> {
+                1 0 0 0
+                0 1 0 0
+                0 0 1 0
+                -6.018 -9.8223 17.1788 1
+              }
+            }
+            <Group> RightToe_End {
+              <Transform> {
+                <Matrix4> {
+                  1 0 0 0
+                  0 1 0 0
+                  0 0 1 0
+                  -3.1874 0.1171 11.234 1
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+<Table> {
+  <Bundle> RootNode {
+    <Table> "<skeleton>" {
+    }
+  }
+}
