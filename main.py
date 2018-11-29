@@ -48,32 +48,44 @@ class Model(object):
     def __init__(self, name, game, pos = None):
         self.name = name
         self.game = game
-        path = os.path.join(MODELS_PATH, name)
-        anim = {}
-
+        self.path = os.path.join(MODELS_PATH, name)
+        #anim = {}
+        self.actors = {}
         # Init animacoes
+        scale = open(os.path.join(self.path, SCALE_TXT)).read()
+        self.scale = float(scale)
+        #self.actor.setScale(scale, scale, scale)
+
         for a in ANIM:
-            anim[a] = os.path.join(MODELS_PATH, name, a)
-        try:
-            print anim
-            self.actor = Actor(
-                os.path.join(path, T_POSE), anim)
+            #anim[a] = os.path.join(MODELS_PATH, name, a)
+            self.actors[a] = self.make_actor(a)
+        #try:
+            #print anim
+            #self.actor = Actor(
+            #    os.path.join(path, T_POSE), anim)
 
-            scale = open(os.path.join(path, SCALE_TXT)).read()
-            scale = float(scale)
-            self.actor.setScale(scale, scale, scale)
+            #scale = open(os.path.join(path, SCALE_TXT)).read()
+            #scale = float(scale)
+            #self.actor.setScale(scale, scale, scale)
 
-        except IOError as ie:
-            print 'Could\'t load character %s due to: %s' % (name, ie.message)
+        #except IOError as ie:
+        #    print 'Could\'t load character %s due to: %s' % (name, ie.message)
 
-        else:
+        #else:
             #if isinstance(pos, tuple):
-            self.actor.reparentTo(game.render)
+        # Init default animation
+        self.current = self.actors[IDLE]
+        self.current.reparentTo(game.render)
             # Be natural
-            self.fight()
+        self.attack()
             #self.anim_contrl = self.actor.getAnimControl("walk")
             #print dir(self.anim_contrl)
             #self.anim_contrl.loop('stand')
+
+    def make_actor(self, anim):
+       actor = Actor(os.path.join(self.path, anim)) 
+       actor.setScale(self.scale, self.scale, self.scale)
+       return actor
 
     def blend(self, anim1, anim2, p1 = 0.5, p2 = 0.5):
         selfactor.enableBlend()
@@ -86,29 +98,29 @@ class Model(object):
         self.actor.disableBlend()
 
     def stand(self):
-        self.actor.loop(IDLE)
+        self.actor = self.actors[IDLE]
     def fight(self):
-        self.actor.loop(FIGHT)
+        self.actor = self.actors[FIGHT]
     def walk(self, direction = None):
         # TODO: move
-        self.actor.loop(WALK)
+        self.actor = self.actors[WALK]
     def turn(self, direction):
-        self.actor.loop(
+        self.actor = self.actors[
             TURNR if direction == RIGHT else (
-                TURNL if direction == LEFT else None))
+                TURNL if direction == LEFT else None)]
 
     def close(self, direction = None):
         # TODO: move
-        self.actor.loop(CLOSE)
+        self.actor = self.actors[CLOSE]
     def attack(self, direction = None):
         # TODO: move
-        self.actor.loop(ATTACK)
+        self.actor = self.actors[ATTACK]
     def hit(self):
         # TODO: move
-        self.actor.loop(HIT)
+        self.actor = self.actors[HIT]
     def die(self, direction = None):
         # TODO: move
-        self.actor.loop(DEATH)
+        self.actor = self.actors[DEATH]
 
     def move(self):
         pass
