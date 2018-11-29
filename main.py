@@ -77,7 +77,7 @@ class Model(object):
         self.current = self.actors[IDLE]
         self.current.reparentTo(game.render)
             # Be natural
-        self.attack()
+        self.walk()
             #self.anim_contrl = self.actor.getAnimControl("walk")
             #print dir(self.anim_contrl)
             #self.anim_contrl.loop('stand')
@@ -88,7 +88,7 @@ class Model(object):
        return actor
 
     def blend(self, anim1, anim2, p1 = 0.5, p2 = 0.5):
-        selfactor.enableBlend()
+        self.actor.enableBlend()
         self.actor.setControlEffect(anim1, p1)
         self.actor.setControlEffect(anim2, p2)
         self.actor.loop(anima1)
@@ -104,6 +104,7 @@ class Model(object):
     def walk(self, direction = None):
         # TODO: move
         self.actor = self.actors[WALK]
+        self.actor.reparentTo(self.game.render)
     def turn(self, direction):
         self.actor = self.actors[
             TURNR if direction == RIGHT else (
@@ -208,7 +209,7 @@ class Game(ShowBase):
         ]
 
         # TODO: Character selection!!!
-        self.player = self.actors[0]
+        self.player = Player('dress', self)
 
     # Define a procedure to move the camera.
     def spinCameraTask(self, task):
