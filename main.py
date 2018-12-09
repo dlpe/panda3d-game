@@ -37,11 +37,11 @@ ANIM = [
     IDLE,
     FIGHT,
     WALK,
-    TURNR,
-    TURNL,
-    ATTACK,
-    HIT,
-    DEATH
+    #TURNR,
+    #TURNL,
+    #ATTACK,
+    #HIT,
+    #DEATH
 ]
 
 class Model(object):
@@ -65,21 +65,26 @@ class Model(object):
 
         except IOError as ie:
             print 'Could\'t load character %s due to: %s' % (name, ie.message)
-
+            raise
         else:
             #if isinstance(pos, tuple):
             self.actor.reparentTo(game.render)
             # Be natural
-            self.fight()
+            self.walk()
+            print 'standing'
+            #self.blend('walk', 'stand')
             #self.anim_contrl = self.actor.getAnimControl("walk")
             #print dir(self.anim_contrl)
             #self.anim_contrl.loop('stand')
 
+    def getActor(self):
+        return self.actor
+
     def blend(self, anim1, anim2, p1 = 0.5, p2 = 0.5):
-        selfactor.enableBlend()
+        self.actor.enableBlend()
         self.actor.setControlEffect(anim1, p1)
         self.actor.setControlEffect(anim2, p2)
-        self.actor.loop(anima1)
+        self.actor.loop(anim1)
         self.actor.loop(anim2)
 
     def disableBlend(self):
@@ -151,13 +156,16 @@ class Game(ShowBase):
         self.light = render.attachNewNode(self.light)
         #render.setLight(self.light)
 
-        self.load_characters()
+        p = self.load_characters()
+        #p.loop('idle')
+
+        #self.player.actor.loop('stand-1')
         # Add the spinCameraTask procedure to the task manager.
         #self.taskMgr.add(self.spinCameraTask, "SpinCameraTask")
 
         #self.pandaActor.setScale(0.005, 0.005, 0.005)
         #self.pandaActor.reparentTo(self.render)
-        #self.pandaActor.loop('walk')
+        #self.pandaActor.loop('')
 
         #self.out = Actor('/home/andre/Downloads/Walking/char.egg')
         #self.out.setScale(0.005, 0.005, 0.005)
@@ -197,6 +205,8 @@ class Game(ShowBase):
 
         # TODO: Character selection!!!
         self.player = self.actors[0]
+
+        return self.player.getActor()
 
     # Define a procedure to move the camera.
     def spinCameraTask(self, task):
