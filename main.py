@@ -164,6 +164,7 @@ class Model(object):
     # Provisory method. Colliders to be implemented when time :(
     def provisoryCollide(self):
         self.colliders = open('.rocks', 'r+').read().splitlines()
+        self.colliders += open('car/list', 'r+').read().splitlines()
         self.colliders = [tuple(x.split()) for x in self.colliders]
 
     def colliding(self, x, y):
@@ -254,7 +255,25 @@ class Game(ShowBase):
         self.pusher = CollisionHandlerPusher()
         self.pusher.addCollider(fromObject, self.scene)
 
-        self.base.loader.loadSfx("stft.ogg").play()
+        self.add_cars()
+
+        self.theme_music = self.base.loader.loadSfx("stft.ogg")
+        self.theme_music.setLoop(True)
+        self.theme_music.play()
+
+    # Goal temporario. Precisa ser melhorado para incluir inimigos de vdd
+    def add_cars(self):
+        self.cars = []
+        cars = open('car/list', 'r+').read().splitlines()
+        cars = [tuple(x.split()) for x in cars]
+
+        for car in cars:
+            model = self.loader.loadModel('car/car')
+            model.reparentTo(self.render)
+            model.setScale(0.8, 1.2, 1)
+            model.setPos(float(car[0]), float(car[1]), 0.2)
+
+            self.cars.append(model)
 
     def load_characters(self):
         self.actors = [
