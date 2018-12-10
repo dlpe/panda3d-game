@@ -14,7 +14,9 @@ from direct.task import Task
 from direct.showbase.DirectObject import DirectObject
 from direct.actor.Actor import Actor
 from panda3d.core import DirectionalLight, WindowProperties
-from panda3d.core import CollisionHandlerFloor, CollisionPlane, CollisionBox, CollisionNode, CollisionRay, Plane, Vec3, Point3, CollisionHandlerQueue, CollisionTraverser, CollisionSphere, CollisionHandlerPusher
+from panda3d.core import CollisionHandlerFloor, CollisionPlane, CollisionBox, CollisionNode, CollisionRay, Plane, Vec3, Point3, CollisionHandlerQueue, CollisionTraverser, CollisionSphere, CollisionHandlerPusher, TextNode, Fog
+from direct.gui.OnscreenText import OnscreenText 
+from direct.gui.DirectGui import DGG, DirectSlider
 
 FORWARD = 'w'
 BACKWARDS = 's'
@@ -156,6 +158,9 @@ class Model(object):
             if not self.colliding(x,y):
                 self.getActor().setPos(x, y, pos[2])
 
+            for car in self.game.cars:
+                car['slider'].setHpr(hpr)
+
             time.sleep(0.1)
 
             print self.getActor().getPos()
@@ -242,6 +247,11 @@ class Game(ShowBase):
         self.light.setColor((1, 1, 1, 1))
         self.light = render.attachNewNode(self.light)
 
+        myFog = Fog("Fog Name")
+        myFog.setColor(0.4,0.2,0.2)
+        myFog.setExpDensity(0.01)
+        render.setFog(myFog)
+
         p = self.load_characters()
         self.camera.reparentTo(self.player.getActor())
 
@@ -257,23 +267,55 @@ class Game(ShowBase):
 
         self.add_cars()
 
+        threading.Thread(target=self.decrease_timer).start()
+
         self.theme_music = self.base.loader.loadSfx("stft.ogg")
         self.theme_music.setLoop(True)
         self.theme_music.play()
 
+    def decrease_timer(self):
+        self.time_left = 60
+        previous = datetime.now()
+        textObject = OnscreenText(text = 'Time Left: 60', pos = (0.85,0.85),
+            scale = 0.13,fg=(1,0,0,1),align=TextNode.ACenter, mayChange=1)
+        while self.time_left > 0 and self.running:
+            if (datetime.now() - previous).total_seconds() < 1.0:
+                time.sleep(0.5)
+                continue
+            
+            previous = datetime.now()
+            timer_text = 'Time left: %s' % self.time_left
+            textObject.setText(timer_text)
+            self.time_left = self.time_left - 1
+
+        self.end_game()
+
+    def end_game(self):
+        pass
+
     # Goal temporario. Precisa ser melhorado para incluir inimigos de vdd
     def add_cars(self):
         self.cars = []
-        cars = open('car/list', 'r+').read().splitlines()
-        cars = [tuple(x.split()) for x in cars]
+        self.cars_pos = open('car/list', 'r+').read().splitlines()
+        self.cars_pos = [tuple(x.split()) for x in self.cars_pos]
 
-        for car in cars:
+        for car in self.cars_pos:
             model = self.loader.loadModel('car/car')
             model.reparentTo(self.render)
             model.setScale(0.8, 1.2, 1)
             model.setPos(float(car[0]), float(car[1]), 0.2)
 
-            self.cars.append(model)
+            slider = DirectSlider(
+                parent = model, range=(0,100), value=10, pageSize=3)
+            slider.reparentTo(model)
+            slider.setPos(0, 0, 4)
+            slider.setScale(4)
+
+            self.cars.append({
+                'model': model,
+                'pos': car,
+                'slider': slider
+                })
 
     def load_characters(self):
         self.actors = [
@@ -289,6 +331,7 @@ class Game(ShowBase):
         return self.player.getActor()
 
     def setup(self):
+        self.running = True
         self.disableMouse()
         self.mouseMagnitude = 1
         self.rotateX, self.rotateY = 0, 0
@@ -300,7 +343,7 @@ class Game(ShowBase):
         self.base.accept('c', lambda: self.toggleRecenter())
         self.base.accept('S', lambda: self.toggleMouse())
         self.base.accept('s', lambda: self.toggleMouse())
-        self.base.accept('escape', sys.exit, [0])
+        self.base.accept('escape', lambda: self.close_game())
 
         self.lastMouseX, self.lastMouseY = None, None
         self.hideMouse = False
@@ -311,6 +354,11 @@ class Game(ShowBase):
         self.cam.lookAt(0, 0, 1)
 
         self.mouseTask = taskMgr.add(self.mouseTask, "Mouse Task")
+
+
+    def close_game(self):
+        self.running = False
+        sys.exit()
 
     def setMouseMode(self, mode):
         self.mouseMode = mode
