@@ -3,7 +3,12 @@
 
 import os
 import sys
-from math import pi, sin, cos
+import threading
+import time
+from datetime import datetime
+from math import pi, sin, cos, radians
+from functools import wraps
+
 from direct.showbase.ShowBase import ShowBase
 from direct.task import Task
 from direct.showbase.DirectObject import DirectObject
@@ -14,6 +19,7 @@ FORWARD = 'w'
 BACKWARDS = 's'
 LEFT = 'a'
 RIGHT = 'd'
+ATTACK_BTN = 'f'
 
 # Load stuff
 PATH = os.path.dirname(__file__)
@@ -39,17 +45,20 @@ ANIM = [
     WALK,
     #TURNR,
     #TURNL,
-    #ATTACK,
+    ATTACK,
     #HIT,
     #DEATH
 ]
 
 class Model(object):
+    PACE = 1.0
     def __init__(self, name, game, pos = None):
         self.name = name
         self.game = game
         path = os.path.join(MODELS_PATH, name)
         anim = {}
+        self.pace = Model.PACE
+        self.is_moving = False
 
         # Init animacoes
         for a in ANIM:
@@ -70,7 +79,7 @@ class Model(object):
             #if isinstance(pos, tuple):
             self.actor.reparentTo(game.render)
             # Be natural
-            self.walk()
+            self.stand()
             print 'standing'
             #self.blend('walk', 'stand')
             #self.anim_contrl = self.actor.getAnimControl("walk")
@@ -95,8 +104,8 @@ class Model(object):
     def fight(self):
         self.actor.loop(FIGHT)
     def walk(self, direction = None):
-        # TODO: move
         self.actor.loop(WALK)
+        threading.Thread(target = self.move).start()
     def turn(self, direction):
         self.actor.loop(
             TURNR if direction == RIGHT else (
@@ -108,6 +117,7 @@ class Model(object):
     def attack(self, direction = None):
         # TODO: move
         self.actor.loop(ATTACK)
+        self.is_moving = False
     def hit(self):
         # TODO: move
         self.actor.loop(HIT)
@@ -116,25 +126,108 @@ class Model(object):
         self.actor.loop(DEATH)
 
     def move(self):
-        pass
+        self.is_moving = True
+        delta = datetime.now()
+        while self.is_moving:
+            pos = self.getActor().getPos()
+            hpr = self.getActor().getHpr()
+
+            co = cos(radians(hpr[0]))
+            se = sin(radians(hpr[0]))
+
+            # Movimenta na direcao do Model
+            self.getActor().setPos(
+                pos[0] + (se * self.pace),
+                pos[1] - (co * self.pace),
+                pos[2]
+                )
+            time.sleep(0.1)
 
 class Player(Model, DirectObject): 
     def __init__(self, name, game, pos = None):
         Model.__init__(self, name, game, pos)
         self.accept(FORWARD, self.forward)
+        self.accept(FORWARD + '-up', self.forward_up)
         self.accept(BACKWARDS, self.backwards)
+        self.accept(BACKWARDS + '-up', self.backwards_up)
         self.accept(LEFT, self.left)
+        self.accept(LEFT + '-up', self.left_up)
         self.accept(RIGHT, self.right)
+        self.accept(RIGHT + '-up', self.right_up)
+        self.accept(ATTACK_BTN, self.attack)
+        self.accept(ATTACK_BTN + '-up', self.attack_up)
 
-    def forward(self, when):
-        print "key ", when
-    def backwards(self, when):
-        print "key ", when
-    def right(self, when):
-        print "key ", when
-    def left(self, when):
-        print "key ", when
+    '''
+    def move(self):
+        if self.is_moving: return
+        self.is_moving = True
+        delta = datetime.now()
+        while self.is_moving:
+            pos = self.getActor().getPos()
+            hpr = self.getActor().getHpr()
 
+            co = cos(radians(hpr[0]))
+            se = sin(radians(hpr[0]))
+
+            # Movimenta na direcao do Model
+            self.getActor().setPos(
+                pos[0] + (se * self.pace),
+                pos[1] - (co * self.pace),
+                pos[2]
+                )
+            time.sleep(0.1)
+
+        # Movimenta na direcao do Model
+        #self.camera.setPos(pos)
+
+            model = self.getActor()
+            self.game.camera.setH(model.getH())
+            self.game.camera.setPos(
+                model.getX() - 10,
+                model.getY() + 1,
+                model.getZ()
+                )
+        #self.camera.lookAt(model)
+
+        #angleDegrees = task.time * 6.0
+        #angleRadians = angleDegrees * (pi / 180.0)
+        #self.camera.setPos(20 * sin(angleRadians), -20.0 * cos(angleRadians), 3)
+            self.game.camera.setHpr(hpr)
+            time.sleep(0.1)
+
+    '''
+
+    def forward(self):
+        self.walk()
+    def backwards(self):
+        print "key "
+    def right(self):
+        print "key "
+    def left(self):
+        print "key "
+    def forward_up(self):
+        #self.blend(WALK, IDLE)
+        #threading.Thread(target=timed_call([self.stand, self.disableBlend], t=0.2)).start()
+        self.stand()
+        self.is_moving = False
+    def backwards_up(self):
+        pass
+    def right_up(self):
+        pass
+    def left_up(self):
+        pass
+    def attack(self):
+        Model.attack(self)
+    def attack_up(self):
+        self.stand()
+
+def timed_call(funcs, t=0):
+    def f():
+        time.sleep(t)
+        for func in funcs:
+            print 'calling %s' % func
+            func()
+    return f
 
 class Game(ShowBase):
     def __init__(self):
@@ -161,8 +254,8 @@ class Game(ShowBase):
 
         #self.player.actor.loop('stand-1')
         # Add the spinCameraTask procedure to the task manager.
-        #self.taskMgr.add(self.spinCameraTask, "SpinCameraTask")
-
+        #self.taskMgr.add(self.mouseTask, "SpinCameraTask")
+        self.camera.reparentTo(self.player.getActor())
         #self.pandaActor.setScale(0.005, 0.005, 0.005)
         #self.pandaActor.reparentTo(self.render)
         #self.pandaActor.loop('')
@@ -197,23 +290,41 @@ class Game(ShowBase):
         ''' 
     def load_characters(self):
         self.actors = [
-            Model(char, self)
+            Player(char, self)
             for char 
             in os.listdir(MODELS_PATH)
             if os.path.isdir(os.path.join(MODELS_PATH, char))
         ]
 
         # TODO: Character selection!!!
-        self.player = self.actors[0]
+        self.player, = self.actors
 
         return self.player.getActor()
 
     # Define a procedure to move the camera.
     def spinCameraTask(self, task):
-        angleDegrees = task.time * 6.0
-        angleRadians = angleDegrees * (pi / 180.0)
-        self.camera.setPos(20 * sin(angleRadians), -20.0 * cos(angleRadians), 3)
-        self.camera.setHpr(angleDegrees, 0, 0)
+        #pos = self.player.getActor().getPos()
+        hpr = self.player.getActor().getHpr()
+
+        #print pos
+        #co = cos(radians(hpr[0]))
+        #se = sin(radians(hpr[0]))
+
+        # Movimenta na direcao do Model
+        #self.camera.setPos(pos)
+
+        model = self.player.getActor()
+        #self.camera.setPos(
+        #    model.getX() - 10,
+        #    model.getY() + 1,
+        #    model.getZ()
+        #    )
+        #self.camera.lookAt(model)
+
+        #angleDegrees = task.time * 6.0
+        #angleRadians = angleDegrees * (pi / 180.0)
+        #self.camera.setPos(20 * sin(angleRadians), -20.0 * cos(angleRadians), 3)
+        #self.camera.setHpr(hpr)
         return Task.cont
 
     def setup(self):
@@ -235,8 +346,8 @@ class Game(ShowBase):
 
         self.setMouseMode(WindowProperties.M_absolute)
         self.manualRecenterMouse = True
-        self.cam.setPos(0, 20, -1)
-        self.cam.lookAt(0, 0, 0)
+        self.cam.setPos(0, 10, 2)
+        self.cam.lookAt(0, 0, 1)
 
         self.mouseTask = taskMgr.add(self.mouseTask, "Mouse Task")
 
@@ -303,7 +414,7 @@ class Game(ShowBase):
 
         self.player.actor.setH(self.rotateX)
         self.player.actor.setP(self.rotateY)
-        self.cam.setPos(self.player.actor.getPos() + (0, 10, 0))
+        #self.cam.setPos(self.player.actor.getPos() + (0, 10, 0))
         return Task.cont
 
 
