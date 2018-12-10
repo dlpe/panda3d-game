@@ -6,7 +6,7 @@ import sys
 import threading
 import time
 from datetime import datetime
-from math import pi, sin, cos, radians
+from math import pi, sin, cos, radians, sqrt
 from functools import wraps
 
 from direct.showbase.ShowBase import ShowBase
@@ -153,12 +153,27 @@ class Model(object):
             if x < -BOUNDARY: x = -BOUNDARY
             if y < -BOUNDARY: y = -BOUNDARY
 
-            self.getActor().setPos(x, y, pos[2])
+            if not self.colliding(x,y):
+                self.getActor().setPos(x, y, pos[2])
 
             time.sleep(0.1)
 
             print self.getActor().getPos()
             print self.queue.getEntries()
+
+    # Provisory method. Colliders to be implemented when time :(
+    def provisoryCollide(self):
+        self.colliders = open('.rocks', 'r+').read().splitlines()
+        self.colliders = [tuple(x.split()) for x in self.colliders]
+
+    def colliding(self, x, y):
+        for c in self.colliders:
+            distance = sqrt((float(x) - float(c[0]))**2 + (float(y) - float(c[1]))**2)
+            if distance < float(c[2]):
+                print c
+                return True
+        return False
+
 
 class Player(Model, DirectObject): 
     def __init__(self, name, game, pos = None):
@@ -173,6 +188,8 @@ class Player(Model, DirectObject):
         self.accept(RIGHT + '-up', self.right_up)
         self.accept(ATTACK_BTN, self.attack)
         self.accept(ATTACK_BTN + '-up', self.attack_up)
+
+        self.provisoryCollide()
 
     def forward(self):
         self.walk()
