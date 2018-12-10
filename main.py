@@ -254,6 +254,8 @@ class Game(ShowBase):
         self.pusher = CollisionHandlerPusher()
         self.pusher.addCollider(fromObject, self.scene)
 
+        self.base.loader.loadSfx("stft.ogg").play()
+
     def load_characters(self):
         self.actors = [
             Player(char, self)
