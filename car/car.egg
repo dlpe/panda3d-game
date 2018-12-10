@@ -1,0 +1,15 @@
+<CoordinateSystem> { Z-Up }
+
+<Comment> {
+  "egg-trans -tbnall -ps keep -o /home/andre/panda3d-game/models/car.egg /home/andre/panda3d-game/models/car.egg"
+}
+<Group> Car {
+  <Transform> {
+    <Matrix4> {
+      -0.00915382 0.00402542 5.99789e-05 0
+      4.47097e-09 -0.000148974 0.00999889 0
+      0.00402587 0.0091528 0.000136366 0
+      0.0990189 0.187665 0.3 1
+    }
+  }
+}

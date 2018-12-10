@@ -14,6 +14,7 @@ from direct.task import Task
 from direct.showbase.DirectObject import DirectObject
 from direct.actor.Actor import Actor
 from panda3d.core import DirectionalLight, WindowProperties
+from panda3d.core import CollisionHandlerFloor, CollisionPlane, CollisionBox, CollisionNode, CollisionRay, Plane, Vec3, Point3, CollisionHandlerQueue, CollisionTraverser, CollisionSphere, CollisionHandlerPusher
 
 FORWARD = 'w'
 BACKWARDS = 's'
@@ -50,6 +51,8 @@ ANIM = [
     #DEATH
 ]
 
+BOUNDARY = 40.0
+
 class Model(object):
     PACE = 1.0
     def __init__(self, name, game, pos = None):
@@ -76,15 +79,21 @@ class Model(object):
             print 'Could\'t load character %s due to: %s' % (name, ie.message)
             raise
         else:
-            #if isinstance(pos, tuple):
             self.actor.reparentTo(game.render)
+            box = CollisionBox(self.actor.getPos(), 1, 1, 1)
+            fromObject = self.actor.attachNewNode(CollisionNode('cnode'))
+            fromObject.node().addSolid(box)
+            fromObject.node().addSolid(CollisionRay(0, 0, 0, 0, 0, -1))
+
+            self.game.lifter.addCollider(fromObject, self.actor)
+
+            self.traverser = CollisionTraverser('traverser name')
+            self.queue = CollisionHandlerQueue()
+            self.traverser.addCollider(fromObject, self.queue)
+            self.traverser.traverse(game.render)
+ 
             # Be natural
             self.stand()
-            print 'standing'
-            #self.blend('walk', 'stand')
-            #self.anim_contrl = self.actor.getAnimControl("walk")
-            #print dir(self.anim_contrl)
-            #self.anim_contrl.loop('stand')
 
     def getActor(self):
         return self.actor
@@ -136,12 +145,20 @@ class Model(object):
             se = sin(radians(hpr[0]))
 
             # Movimenta na direcao do Model
-            self.getActor().setPos(
-                pos[0] + (se * self.pace),
-                pos[1] - (co * self.pace),
-                pos[2]
-                )
+            x = pos[0] + (se * self.pace)
+            y = pos[1] - (co * self.pace)
+
+            if x > BOUNDARY: x = BOUNDARY
+            if y > BOUNDARY: y = BOUNDARY
+            if x < -BOUNDARY: x = -BOUNDARY
+            if y < -BOUNDARY: y = -BOUNDARY
+
+            self.getActor().setPos(x, y, pos[2])
+
             time.sleep(0.1)
+
+            print self.getActor().getPos()
+            print self.queue.getEntries()
 
 class Player(Model, DirectObject): 
     def __init__(self, name, game, pos = None):
@@ -157,46 +174,6 @@ class Player(Model, DirectObject):
         self.accept(ATTACK_BTN, self.attack)
         self.accept(ATTACK_BTN + '-up', self.attack_up)
 
-    '''
-    def move(self):
-        if self.is_moving: return
-        self.is_moving = True
-        delta = datetime.now()
-        while self.is_moving:
-            pos = self.getActor().getPos()
-            hpr = self.getActor().getHpr()
-
-            co = cos(radians(hpr[0]))
-            se = sin(radians(hpr[0]))
-
-            # Movimenta na direcao do Model
-            self.getActor().setPos(
-                pos[0] + (se * self.pace),
-                pos[1] - (co * self.pace),
-                pos[2]
-                )
-            time.sleep(0.1)
-
-        # Movimenta na direcao do Model
-        #self.camera.setPos(pos)
-
-            model = self.getActor()
-            self.game.camera.setH(model.getH())
-            self.game.camera.setPos(
-                model.getX() - 10,
-                model.getY() + 1,
-                model.getZ()
-                )
-        #self.camera.lookAt(model)
-
-        #angleDegrees = task.time * 6.0
-        #angleRadians = angleDegrees * (pi / 180.0)
-        #self.camera.setPos(20 * sin(angleRadians), -20.0 * cos(angleRadians), 3)
-            self.game.camera.setHpr(hpr)
-            time.sleep(0.1)
-
-    '''
-
     def forward(self):
         self.walk()
     def backwards(self):
@@ -206,8 +183,6 @@ class Player(Model, DirectObject):
     def left(self):
         print "key "
     def forward_up(self):
-        #self.blend(WALK, IDLE)
-        #threading.Thread(target=timed_call([self.stand, self.disableBlend], t=0.2)).start()
         self.stand()
         self.is_moving = False
     def backwards_up(self):
@@ -242,52 +217,26 @@ class Game(ShowBase):
         # Apply scale and position transforms on the model.
         self.scene.setScale(0.25, 0.25, 0.25)
         self.scene.setPos(-8, 42, 0)
+        self.lifter = CollisionHandlerFloor()
 
         # Create Ambient Light
         self.light = DirectionalLight('ambientLight')
         self.light.setColor((1, 1, 1, 1))
         self.light = render.attachNewNode(self.light)
-        #render.setLight(self.light)
 
         p = self.load_characters()
-        #p.loop('idle')
-
-        #self.player.actor.loop('stand-1')
-        # Add the spinCameraTask procedure to the task manager.
-        #self.taskMgr.add(self.mouseTask, "SpinCameraTask")
         self.camera.reparentTo(self.player.getActor())
-        #self.pandaActor.setScale(0.005, 0.005, 0.005)
-        #self.pandaActor.reparentTo(self.render)
-        #self.pandaActor.loop('')
 
-        #self.out = Actor('/home/andre/Downloads/Walking/char.egg')
-        #self.out.setScale(0.005, 0.005, 0.005)
-        #self.out.reparentTo(self.render)
-        #self.out.loop('')
-        # Create the four lerp intervals needed for the panda to
-        # walk back and forth.
-        ''' 
-        pandaPosInterval1 = self.pandaActor.posInterval(13,
-                                                        Point3(0, -10, 0),
-                                                        startPos=Point3(0, 10, 0))
-        pandaPosInterval2 = self.pandaActor.posInterval(13,
-                                                        Point3(0, 10, 0),
-                                                        startPos=Point3(0, -10, 0))
-        pandaHprInterval1 = self.pandaActor.hprInterval(3,
-                                                        Point3(180, 0, 0),
-                                                        startHpr=Point3(0, 0, 0))
-        pandaHprInterval2 = self.pandaActor.hprInterval(3,
-                                                        Point3(0, 0, 0),
-                                                        startHpr=Point3(180, 0, 0))
+        rock = CollisionBox((-22.0, 7, 0), 5, 5, 5)
+        cnodePath = self.scene.attachNewNode(CollisionNode('cnode'))
+        cnodePath.node().addSolid(rock)
+
+        fromObject = self.scene.attachNewNode(CollisionNode('colNode'))
+        fromObject.node().addSolid(CollisionSphere(-22, 7, 0, 20))
  
-        # Create and play the sequence that coordinates the intervals.
-        self.pandaPace = Sequence(pandaPosInterval1,
-                                  pandaHprInterval1,
-                                  pandaPosInterval2,
-                                  pandaHprInterval2,
-                                  name="pandaPace")
-        self.pandaPace.loop()
-        ''' 
+        self.pusher = CollisionHandlerPusher()
+        self.pusher.addCollider(fromObject, self.scene)
+
     def load_characters(self):
         self.actors = [
             Player(char, self)
@@ -297,35 +246,9 @@ class Game(ShowBase):
         ]
 
         # TODO: Character selection!!!
-        self.player, = self.actors
+        self.player = self.actors[0]
 
         return self.player.getActor()
-
-    # Define a procedure to move the camera.
-    def spinCameraTask(self, task):
-        #pos = self.player.getActor().getPos()
-        hpr = self.player.getActor().getHpr()
-
-        #print pos
-        #co = cos(radians(hpr[0]))
-        #se = sin(radians(hpr[0]))
-
-        # Movimenta na direcao do Model
-        #self.camera.setPos(pos)
-
-        model = self.player.getActor()
-        #self.camera.setPos(
-        #    model.getX() - 10,
-        #    model.getY() + 1,
-        #    model.getZ()
-        #    )
-        #self.camera.lookAt(model)
-
-        #angleDegrees = task.time * 6.0
-        #angleRadians = angleDegrees * (pi / 180.0)
-        #self.camera.setPos(20 * sin(angleRadians), -20.0 * cos(angleRadians), 3)
-        #self.camera.setHpr(hpr)
-        return Task.cont
 
     def setup(self):
         self.disableMouse()
@@ -414,7 +337,6 @@ class Game(ShowBase):
 
         self.player.actor.setH(self.rotateX)
         self.player.actor.setP(self.rotateY)
-        #self.cam.setPos(self.player.actor.getPos() + (0, 10, 0))
         return Task.cont
 
 
