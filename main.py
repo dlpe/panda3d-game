@@ -18,6 +18,7 @@ from panda3d.core import CollisionHandlerFloor, CollisionPlane, CollisionBox, Co
 from direct.gui.OnscreenText import OnscreenText 
 from direct.gui.DirectGui import DGG, DirectSlider, DirectWaitBar
 from direct.particles.ParticleEffect import ParticleEffect
+from direct.gui.OnscreenImage import OnscreenImage
 
 FORWARD = 'w'
 BACKWARDS = 's'
@@ -54,6 +55,7 @@ ANIM = [
     #DEATH
 ]
 
+TIME = 30.0
 BOUNDARY = 40.0
 ATTACK_PWR = 10.0
 
@@ -232,7 +234,7 @@ class Player(Model, DirectObject):
 
     def hit(self, i):
         car = self.game.cars[i]
-        while self.attacking:
+        while self.attacking and self.game.running:
             print car
             self.punch.play()
             car['life'] -= ATTACK_PWR
@@ -248,7 +250,8 @@ class Player(Model, DirectObject):
 
                 #self.game.add_cars(cars_pos=self.game.cars_pos)
                 self.attacking = False
-                break
+                if self.game.running:
+                    self.game.end_game(won=True)
 
             time.sleep(1)
 
@@ -257,10 +260,7 @@ def timed_call(funcs, t=0, args = None):
         time.sleep(t)
         for func in funcs:
             print 'calling %s' % func
-            if args:
-                func(args)
-            else:
-                func()
+            func(args)
     return f
 
 def distance(a, b):
@@ -314,9 +314,9 @@ class Game(ShowBase):
         self.theme_music.play()
 
     def decrease_timer(self):
-        self.time_left = 60
+        self.time_left = TIME
         previous = datetime.now()
-        textObject = OnscreenText(text = 'Time Left: 60', pos = (0.85,0.85),
+        self.textObject = OnscreenText(text = 'Time Left: %s' % TIME, pos = (0.85,0.85),
             scale = 0.13,fg=(1,0,0,1),align=TextNode.ACenter, mayChange=1)
         while self.time_left > 0 and self.running:
             if (datetime.now() - previous).total_seconds() < 1.0:
@@ -325,13 +325,31 @@ class Game(ShowBase):
             
             previous = datetime.now()
             timer_text = 'Time left: %s' % self.time_left
-            textObject.setText(timer_text)
+            self.textObject.setText(timer_text)
             self.time_left = self.time_left - 1
+        if self.running:
+            self.end_game()
 
-        self.end_game()
+    def end_game(self, won=False):
+        self.running = False
+        myFog = Fog("Fog Name")
+        myFog.setColor(0,0,0)
+        myFog.setExpDensity(1)
+        render.setFog(myFog)
+        self.theme_music.stop()
 
-    def end_game(self):
-        pass
+        version = 'happy' if won else 'sad'
+        imageObject = OnscreenImage(image = '%s.jpg' % version, pos = (0, 0, 0))
+        self.theme_music = self.base.loader.loadSfx('%s.ogg' % version)
+        self.theme_music.play()
+        self.textObject.setText('')
+        newTextObject = OnscreenText(text = 'You %s!' % ('win' if won else 'lose'), 
+            pos=(0,0), scale = 0.13,fg=(1,0,0,1),align=TextNode.ACenter, mayChange=1)
+
+
+        #time.sleep(6)
+        sys.exit(0)
+ 
 
     # Goal temporario. Precisa ser melhorado para incluir inimigos de vdd
     def add_cars(self, cars_pos = None):
