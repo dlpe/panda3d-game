@@ -13,11 +13,9 @@ from direct.showbase.ShowBase import ShowBase
 from direct.task import Task
 from direct.showbase.DirectObject import DirectObject
 from direct.actor.Actor import Actor
-from panda3d.core import DirectionalLight, WindowProperties, Filename
-from panda3d.core import CollisionHandlerFloor, CollisionPlane, CollisionBox, CollisionNode, CollisionRay, Plane, Vec3, Point3, CollisionHandlerQueue, CollisionTraverser, CollisionSphere, CollisionHandlerPusher, TextNode, Fog
+from panda3d.core import DirectionalLight, WindowProperties
+from panda3d.core import CollisionHandlerFloor, CollisionPlane, CollisionBox, CollisionNode, CollisionRay, Plane, Vec3, Point3, CollisionHandlerQueue, CollisionTraverser, CollisionSphere, CollisionHandlerPusher, TextNode
 from direct.gui.OnscreenText import OnscreenText 
-from direct.gui.DirectGui import DGG, DirectSlider, DirectWaitBar
-from direct.particles.ParticleEffect import ParticleEffect
 
 FORWARD = 'w'
 BACKWARDS = 's'
@@ -55,7 +53,6 @@ ANIM = [
 ]
 
 BOUNDARY = 40.0
-ATTACK_PWR = 10.0
 
 class Model(object):
     PACE = 1.0
@@ -131,7 +128,6 @@ class Model(object):
         # TODO: move
         self.actor.loop(ATTACK)
         self.is_moving = False
-
     def hit(self):
         # TODO: move
         self.actor.loop(HIT)
@@ -160,9 +156,6 @@ class Model(object):
 
             if not self.colliding(x,y):
                 self.getActor().setPos(x, y, pos[2])
-
-            #for car in self.game.cars:
-            #    car['life_bar'].setHpr(hpr)
 
             time.sleep(0.1)
 
@@ -199,8 +192,6 @@ class Player(Model, DirectObject):
         self.accept(ATTACK_BTN + '-up', self.attack_up)
 
         self.provisoryCollide()
-        self.punch = self.game.base.loader.loadSfx("punch.ogg")
-        self.explode = self.game.base.loader.loadSfx("explosion.ogg")
 
     def forward(self):
         self.walk()
@@ -220,57 +211,22 @@ class Player(Model, DirectObject):
     def left_up(self):
         pass
     def attack(self):
-        self.attacking = True
         Model.attack(self)
-        for i, car in enumerate(self.game.cars):
-            if distance(car['pos'], self.getActor().getPos()) < car['pos'][2]:
-                threading.Thread(target=timed_call([self.hit], t = 1, args = i)).start()
-
     def attack_up(self):
-        self.attacking = False
         self.stand()
 
-    def hit(self, i):
-        car = self.game.cars[i]
-        while self.attacking:
-            print car
-            self.punch.play()
-            car['life'] -= ATTACK_PWR
-            if car['life'] <= 0.0:
-                self.game.loadParticleConfig('fireish.ptf', car['model'])
-                self.explode.play()
-                time.sleep(2)
-                self.game.loadParticleConfig('smokering.ptf', car['model'])
-                time.sleep(5)
-                car['model'].hide()
-                self.game.cars_pos = [x for x in self.game.cars_pos if distance(x, car['pos']) > 0]
-                print self.game.cars_pos
-
-                #self.game.add_cars(cars_pos=self.game.cars_pos)
-                self.attacking = False
-                break
-
-            time.sleep(1)
-
-def timed_call(funcs, t=0, args = None):
+def timed_call(funcs, t=0):
     def f():
         time.sleep(t)
         for func in funcs:
             print 'calling %s' % func
-            if args:
-                func(args)
-            else:
-                func()
+            func()
     return f
-
-def distance(a, b):
-    return sqrt((float(a[0]) - float(b[0]))**2 + (float(a[1]) - float(b[1]))**2)
 
 class Game(ShowBase):
     def __init__(self):
         ShowBase.__init__(self)
         self.base = self
-        self.cars = []
         self.setup()
 
         # Load the environment model.
@@ -286,11 +242,6 @@ class Game(ShowBase):
         self.light = DirectionalLight('ambientLight')
         self.light.setColor((1, 1, 1, 1))
         self.light = render.attachNewNode(self.light)
-
-        myFog = Fog("Fog Name")
-        myFog.setColor(0.4,0.2,0.2)
-        myFog.setExpDensity(0.01)
-        render.setFog(myFog)
 
         p = self.load_characters()
         self.camera.reparentTo(self.player.getActor())
@@ -315,17 +266,18 @@ class Game(ShowBase):
 
     def decrease_timer(self):
         self.time_left = 60
-        previous = datetime.now()
+        delta = datetime.now()
         textObject = OnscreenText(text = 'Time Left: 60', pos = (0.85,0.85),
             scale = 0.13,fg=(1,0,0,1),align=TextNode.ACenter, mayChange=1)
         while self.time_left > 0 and self.running:
-            if (datetime.now() - previous).total_seconds() < 1.0:
+            if (datetime.now() - delta).total_seconds > 1.0:
                 time.sleep(0.5)
                 continue
             
-            previous = datetime.now()
-            timer_text = 'Time left: %s' % self.time_left
-            textObject.setText(timer_text)
+            delta = datetime.now() + delta - 1.0
+            timer_text = 'Time left: %s a' % self.time_left
+            textObject.text = timer_text
+            print dir(textObject)
             self.time_left = self.time_left - 1
 
         self.end_game()
@@ -333,26 +285,20 @@ class Game(ShowBase):
     def end_game(self):
         pass
 
+
     # Goal temporario. Precisa ser melhorado para incluir inimigos de vdd
-    def add_cars(self, cars_pos = None):
-        if not cars_pos:
-            self.cars_pos = open('car/list', 'r+').read().splitlines()
-            self.cars_pos = [tuple(x.split()) for x in self.cars_pos]
+    def add_cars(self):
+        self.cars = []
+        self.cars_pos = open('car/list', 'r+').read().splitlines()
+        self.cars_pos = [tuple(x.split()) for x in self.cars_pos]
 
-        else:
-            self.cars_pos = cars_pos
-
-        print self.cars_pos
-        for i, car in enumerate(self.cars_pos):
-            model = self.loader.loadModel('car/car%s' % i)
+        for car in self.cars_pos:
+            model = self.loader.loadModel('car/car')
             model.reparentTo(self.render)
-            model.setScale(1, 0.8, 0.8)
+            model.setScale(0.8, 1.2, 1)
             model.setPos(float(car[0]), float(car[1]), 0.2)
-            self.cars.append({
-                'model': model,
-                'pos': car,
-                'life': 100
-                })
+
+            self.cars.append(model)
 
     def load_characters(self):
         self.actors = [
@@ -391,25 +337,7 @@ class Game(ShowBase):
         self.cam.lookAt(0, 0, 1)
 
         self.mouseTask = taskMgr.add(self.mouseTask, "Mouse Task")
-        self.base.enableParticles()
-        self.particles = []
-        #self.p = ParticleEffect()
-        #self.p.loadConfig('particle-config')
 
-        # self.p.start(parent = render, renderParent = render)
-
-
-    def loadParticleConfig(self, filename, par):
-        # Start of the code from steam.ptf
-        p = ParticleEffect()
-        p.loadConfig(Filename(filename))
-        # Sets particles to birth relative to the teapot, but to render at
-        # toplevel
-        p.start(par)
-        p.setPos(3.000, 0.000, 2.250)
-        p.setScale(5)
-
-        self.particles.append(p)
 
     def close_game(self):
         self.running = False
@@ -478,11 +406,6 @@ class Game(ShowBase):
 
         self.player.actor.setH(self.rotateX)
         self.player.actor.setP(self.rotateY)
-
-        #for car in self.cars:
-            #print 'setting to %s' % self.cam.getHpr()
-            #car['life'].lookAt(self.cam)
-
         return Task.cont
 
 

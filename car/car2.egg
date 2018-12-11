@@ -143,9 +143,9 @@
   <Scalar> wrap { REPEAT }
 }
 
-  <Group> Armature1 {
+  <Group> Armature2 {
     <Dart> { 1 }
-    <Joint> Armature1 {
+    <Joint> Armature2 {
       <Transform> {
         <Matrix4> {
           -0.79339200258255 -0.6079437136650085 0.0305543951690197 0.0 
