@@ -55,7 +55,7 @@ ANIM = [
     #DEATH
 ]
 
-TIME = 30.0
+TIME = 20.0
 BOUNDARY = 40.0
 ATTACK_PWR = 10.0
 
@@ -345,7 +345,6 @@ class Game(ShowBase):
         self.textObject.setText('')
         newTextObject = OnscreenText(text = 'You %s!' % ('win' if won else 'lose'), 
             pos=(0,0), scale = 0.13,fg=(1,0,0,1),align=TextNode.ACenter, mayChange=1)
-
 
         #time.sleep(6)
         sys.exit(0)
